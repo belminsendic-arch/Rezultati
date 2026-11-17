@@ -1,0 +1,485 @@
+<!doctype html>
+<html lang="bs">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#06232c">
+<title>Rezultati – uređivač utakmica</title>
+<style>
+:root{--navy:#06232c;--pink:#ef0046;--muted:#626c70;--pale:#eee;--line:#e2e5e6;--green:#078e4c;--white:#fff}
+*{box-sizing:border-box}[hidden]{display:none!important}body{margin:0;background:#e7e9ea;color:var(--navy);font-family:Arial,Helvetica,sans-serif}
+button,input,select,textarea{font:inherit}button{cursor:pointer}
+.shell{max-width:1140px;margin:auto;display:grid;grid-template-columns:minmax(320px,525px) minmax(320px,1fr);gap:18px;padding:18px}
+.phone{background:#fff;min-height:850px;max-width:525px;width:100%;margin:auto;box-shadow:0 5px 25px #0002;overflow:hidden}
+.top{height:82px;background:var(--navy);color:white;display:flex;align-items:center;padding:0 24px;gap:18px;font-size:26px;font-weight:bold}.top .back{font-size:46px;font-weight:300;line-height:1}.top .ball{font-size:42px}.top .right{margin-left:auto;font-size:32px}
+.top .ball{font-size:29px}.top .right{margin-left:auto;font-size:24px}
+.competition{min-height:72px;background:#f8f8f8;border-bottom:2px solid #d5d8d9;padding:18px 24px;color:#5e696d;font-size:17px;display:flex;align-items:center;gap:18px;white-space:nowrap;overflow:hidden}.competition .compicon{width:54px;height:38px;object-fit:contain;flex:0 0 auto}.competition .compname{overflow:hidden;text-overflow:ellipsis}.competition .chev{margin-left:auto;font-size:42px;font-weight:200;line-height:1}
+.match{background:#eee;text-align:center;padding:16px 10px 17px;position:relative}.matchtop{font-size:13px;font-weight:bold;color:#737d81;margin-bottom:6px}.matchgrid{display:grid;grid-template-columns:1fr 1.2fr 1fr;align-items:center;gap:8px}.teamhero{position:relative;min-width:0}.heroLogo{width:88px;height:88px;border-radius:18px;background:#fff;display:grid;place-items:center;margin:auto;overflow:hidden}.heroLogo img{width:94%;height:94%;object-fit:contain}.heroLogo .initial{font-size:34px;font-weight:bold;color:var(--navy)}.teamhero .teamname{font-size:16px;margin-top:9px}#teamA.winner-highlight,#teamB.winner-highlight{display:inline-block!important;font-weight:700!important;color:#102a32!important;-webkit-text-stroke:0!important;text-shadow:none!important;letter-spacing:0!important}.star{position:absolute;top:22px;font-size:32px;color:#718084;line-height:1}.teamhero:first-child .star{left:0}.matchgrid .teamhero:nth-child(3) .star{right:0}.scoreblock{align-self:center}.score{font-size:76px;line-height:1.05;margin:8px 0 0}.status{font-size:22px;margin-top:14px}.penpill{display:inline-block;margin-top:16px;background:var(--navy);color:#fff;border-radius:8px;padding:3px 7px;font-size:16px;font-weight:bold}.venue{display:inline-block;margin-top:14px;background:#dfe1e2;border-radius:12px;padding:9px 16px;font-size:15px;letter-spacing:.5px}.qualifier{display:inline-block;font-size:22px;margin-left:8px;color:var(--navy);vertical-align:middle}
+.date{font-size:13px;font-weight:bold;color:#737d81}
+.teams{display:grid;grid-template-columns:1fr 1fr 1fr;align-items:start;margin-top:12px}
+.flagbox{width:88px;height:88px;border-radius:18px;background:#fff;display:grid;place-items:center;margin:auto;font-size:48px;overflow:hidden}.flagbox img{width:94%;height:94%;object-fit:contain}
+.scoreblock{align-self:center;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;transform:translateY(-8px)}.score{font-size:44px;font-weight:bold;margin-top:16px;white-space:nowrap;text-align:center}.status{font-size:13px;color:#737d81;font-weight:bold;margin-top:5px;text-align:center}
+.teamname{font-size:16px;margin-top:9px;white-space:normal}.rank{display:none}
+.tabs{height:50px;display:grid;grid-template-columns:1fr 1.1fr .85fr 1.5fr;border-bottom:1px solid var(--line)}
+.tab{border:0;background:#fff;color:#5e686c;font-size:clamp(9px,2.4vw,12px);font-weight:bold;padding:0 2px;position:relative;white-space:nowrap}
+.tab.active{color:var(--pink)}.tab.active:after{content:"";height:4px;position:absolute;bottom:0;left:12%;width:76%;background:var(--pink);border-radius:4px 4px 0 0}
+.view{min-height:610px;padding-bottom:20px}
+.period{background:#eee;color:#626c70;display:flex;justify-content:space-between;padding:8px 15px;font-size:11px;font-weight:bold}
+.event{display:flex;align-items:center;gap:8px;padding:9px 13px;min-height:45px;font-size:12px}
+.minute{min-width:34px;color:#626c70;font-weight:bold}
+.evbody{flex:1;display:flex;align-items:center;gap:7px;min-width:0;flex-wrap:wrap}.evbody b{font-weight:bold}
+.evbody.right{justify-content:flex-end;text-align:right}
+.scorepill{border:1px solid #e3e6e7;border-radius:10px;padding:5px 7px;white-space:nowrap;font-weight:bold}.event-kind{display:inline-block;margin-left:4px;padding:2px 5px;border-radius:5px;background:#e9eef0;color:#344b53;font-size:9px;font-weight:800;letter-spacing:.3px;vertical-align:middle}
+.sub{color:#697478}.badgeicon{border:1px solid #e3e6e7;border-radius:9px;padding:5px;font-size:15px;white-space:nowrap}.redball{display:inline-grid;place-items:center;width:18px;height:18px;border:1.5px solid #e32636;border-radius:50%;color:#e32636;font-size:12px;line-height:1;flex:0 0 18px}.shootout-heading{padding:10px 15px;font-size:12px;letter-spacing:.4px}.shootout-row{display:flex;align-items:center;gap:10px;min-height:72px;padding:12px 15px;font-size:16px;white-space:nowrap}.shootout-row.home{justify-content:flex-start}.shootout-row.away{justify-content:flex-end}.shootout-number{width:30px;flex:0 0 30px;text-align:center;color:#626c70;font-weight:bold;font-size:15px}.penalty-icon{width:46px;height:46px;flex:0 0 46px;border:2px solid #e9ebec;border-radius:13px;display:grid;place-items:center;color:var(--navy);background:#fff}.penalty-icon svg{width:34px;height:34px}.penalty-icon.miss{color:#e32626}.shootout-row b{font-weight:700}.shootout-note{font-size:15px;color:var(--navy);font-weight:400}.shootout-row.away .shootout-note{margin-right:0}.shootout-row.away .shootout-number{margin-left:2px}.event.own-event{justify-content:space-between}.event.own-event .evbody{flex:0 1 auto}.event.own-event.home{justify-content:flex-start}.event.own-event.home .evbody{flex:1 1 auto;justify-content:flex-start}.event.own-event.away{justify-content:flex-end}.event.own-event.away .evbody{flex:0 1 auto;justify-content:flex-end}.event.shootout-miss-event .minute{margin-left:auto;text-align:right}.event.shootout-miss-event .evbody{flex:0 1 auto}.event .evbody .own-label,.event .evbody .miss-label{color:#34474d;white-space:nowrap}.event .evbody .own-score{font-weight:bold;border:1px solid #d9dfe1;border-radius:4px;padding:2px 6px;white-space:nowrap}
+
+.event-symbol{width:30px;height:29px;object-fit:contain;flex:0 0 30px;mix-blend-mode:multiply}
+.event-ball{width:22px;height:22px;min-width:22px;object-fit:contain;vertical-align:middle;mix-blend-mode:multiply;flex:0 0 22px}
+.penalty-icon{border:0;background:transparent;overflow:hidden}
+.penalty-icon img{width:46px;height:42px;object-fit:contain;mix-blend-mode:multiply}
+.penalty-icon.scored img{filter:grayscale(1) brightness(.48) sepia(.2) hue-rotate(145deg) saturate(2)}
+.penalty-icon.miss img{filter:none}
+.event.penalty-miss-event.away{justify-content:flex-end}
+.event.penalty-miss-event.away .minute{order:2;text-align:right;margin-left:0}
+.event.own-event.away{justify-content:flex-end}
+.event.own-event.away .minute{order:2;text-align:right}
+.event.own-event .own-score{display:inline-flex;align-items:center;gap:4px}
+.statfilters{display:flex;gap:8px;padding:17px 14px;border-bottom:1px solid var(--line);overflow:auto}
+.pill{border:0;border-radius:12px;background:#eee;color:#626c70;font-weight:bold;font-size:11px;padding:11px 13px;white-space:nowrap}
+.pill.active{background:var(--pink);color:white}
+.heading{font-size:21px;font-weight:bold;padding:22px 16px 14px;border-bottom:1px solid var(--line)}
+.statrow{padding:14px 16px 4px}
+.statvals{display:grid;grid-template-columns:48px 1fr 48px;align-items:center;font-size:14px;font-weight:bold;color:#667176}
+.statvals span:nth-child(2){text-align:center;color:var(--navy);font-size:13px}.statvals span:last-child{text-align:right}
+.bar{height:9px;border-radius:5px;background:#eee;display:flex;gap:2px;margin-top:8px;overflow:hidden}.bar i:first-child{background:var(--pink)}.bar i:last-child{background:var(--navy)}
+.subval{font-size:9px;font-weight:normal;margin-top:2px}
+.formhead{display:flex;justify-content:space-between;padding:13px 17px;background:#eee;color:#626c70;font-weight:bold;font-size:12px}
+.pitchwrap{background:#eee;padding:12px}
+.pitch{height:330px;position:relative;border:2px solid #c9cecf;background:#eee;overflow:hidden;margin-bottom:12px}
+.pitch:before{content:"";position:absolute;top:0;bottom:0;left:50%;border-left:2px solid #c9cecf}
+.pitch:after{content:"";position:absolute;width:100px;height:100px;border:2px solid #c9cecf;border-radius:50%;left:calc(50% - 50px);top:calc(50% - 50px)}
+.area{position:absolute;top:18%;height:64%;width:13%;border:2px solid #c9cecf}.area.top{left:0;border-left:0}.area.bottom{right:0;border-right:0}
+.dotplayer{position:absolute;transform:translate(-50%,-50%);width:72px;text-align:center;z-index:1}
+.face{width:27px;height:27px;border-radius:50%;background:#d8e0e1;border:2px solid white;margin:auto;display:grid;place-items:center;font-size:10px;font-weight:bold;color:#30444a}
+.rate{display:inline-block;background:#70ad00;color:white;border-radius:5px;padding:3px 5px;font-size:11px;font-weight:bold;margin-top:-5px;position:relative}.rate.mid{background:#ed8800}.rate.low{background:#d9001b}
+.pname{display:block;background:#fff;border-radius:5px;padding:3px 4px;font-size:10px;font-weight:bold;white-space:nowrap;box-shadow:0 1px 2px #0002}
+.note{text-align:center;color:#899195;font-size:10px;padding:12px}
+.editor{background:#fff;border-radius:12px;padding:18px;box-shadow:0 5px 25px #0001;align-self:start}
+.editor h2{margin:0 0 7px;font-size:22px}.muted{color:#697478;font-size:13px;line-height:1.45}
+.editornav{display:flex;flex-wrap:wrap;gap:7px;margin:15px 0}
+.edtab{border:1px solid var(--line);background:#fff;border-radius:8px;padding:8px 10px;font-size:12px;font-weight:bold;color:#596367}
+.edtab.active{background:var(--navy);color:white}
+.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.field{display:flex;flex-direction:column;gap:5px;margin:8px 0;min-width:0}
+.field.full{grid-column:1/-1}
+label{font-size:11px;font-weight:bold;color:#5e696d}
+input,select,textarea{border:1px solid #d7dcde;border-radius:7px;padding:10px;background:#fff;color:#102a33;width:100%;min-width:0}
+textarea{min-height:64px;resize:vertical}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+.btn{border:0;border-radius:8px;padding:10px 13px;background:var(--pink);color:#fff;font-size:12px;font-weight:bold}
+.btn.secondary{background:#e9edef;color:#273c43}.btn.dark{background:var(--navy)}
+.list{border-top:1px solid var(--line);margin-top:12px}
+.item{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:9px 0;border-bottom:1px solid var(--line);font-size:12px}
+.item button{border:0;border-radius:6px;padding:6px 8px;background:#edf0f1;color:#263c43;font-size:11px}
+.help{background:#f4f6f6;padding:10px;border-radius:8px;font-size:12px;color:#566368;line-height:1.45;margin:10px 0}
+@media(max-width:780px){.shell{display:flex;flex-direction:column;padding:0;gap:12px}.phone{max-width:525px}.editor{width:calc(100% - 20px);margin:0 auto 18px}.match{padding:22px 10px}.matchtop{font-size:19px}.heroLogo{width:88px;height:88px;border-radius:18px}.teamhero .teamname{font-size:18px;margin-top:18px}.star{font-size:30px;top:28px}.score{font-size:54px}.status{font-size:15px}.penpill{font-size:18px;margin-top:16px}.venue{font-size:15px;margin-top:22px;padding:10px 14px}.competition{padding:13px 12px;font-size:12px;min-height:58px;gap:10px}.competition .compicon{width:36px;height:28px}.competition .chev{font-size:30px}.top{height:66px;padding:0 14px;gap:10px;font-size:20px}.top .back{font-size:34px}.top .ball{font-size:30px}.top .right{font-size:24px}.matchgrid{gap:3px}}
+
+/* Formation view – green tactical pitch matching the compact reference */
+.pitchwrap{background:#f1f1f1;padding:0;display:grid;gap:14px}
+.tactic-card{background:#f1f1f1;border:0;border-radius:0;padding:0;box-shadow:none;overflow:hidden}
+.tactic-head{height:52px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;padding:0 14px;border-bottom:2px solid #fff;color:#596266}
+.tactic-head .formation-chip{background:transparent;border:0;border-radius:0;padding:0;color:#596266;font-size:19px;letter-spacing:1.5px;font-weight:800;justify-self:start}
+.tactic-head .tactic-title{font-size:18px;letter-spacing:1.2px;font-weight:800;color:#596266;text-align:center}
+.tactic-head .opponent-formation{font-size:19px;letter-spacing:1.5px;font-weight:800;color:#596266;justify-self:end}
+.tactic-meta{display:none}
+.tactic-pitch-area{padding:12px 0 14px;background:#f1f1f1}
+.pitch{height:auto;aspect-ratio:1.32/1;max-height:360px;min-height:270px;position:relative;border:1px solid rgba(255,255,255,.7);border-radius:7px;background:repeating-linear-gradient(to bottom,#2c805b 0%,#2c805b 12.5%,#267650 12.5%,#267650 25%);overflow:hidden;margin:0;box-shadow:0 1px 2px #0002}
+.pitch:before{content:"";position:absolute;inset:0 0 0 50%;border-left:1px solid rgba(255,255,255,.8);z-index:0}
+.pitch:after{content:"";position:absolute;width:22%;aspect-ratio:1;border:1px solid rgba(255,255,255,.8);border-radius:50%;left:39%;top:39%;z-index:0}
+.pitch .area{position:absolute;top:27%;height:46%;width:13%;border:1px solid rgba(255,255,255,.9);z-index:0;background:transparent!important}
+.pitch .area.top{left:0;border-left:0}.pitch .area.bottom{right:0;top:27%;bottom:auto;border-right:0;border-bottom:1px solid rgba(255,255,255,.9)}
+.pitch .area:after{content:"";position:absolute;width:38%;height:42%;top:29%;border:1px solid rgba(255,255,255,.9);background:transparent!important}
+.pitch .area.top:after{left:0;border-left:0}.pitch .area.bottom:after{right:0;border-right:0;bottom:auto}
+.pitch-mark{display:none}
+.team-summary{position:absolute;left:8px;top:7px;display:flex;align-items:center;gap:6px;z-index:4}
+.team-summary img{width:34px;height:34px;object-fit:contain}
+.team-average{display:flex;align-items:center;background:#fff;border:1px solid #78b900;border-radius:8px;overflow:hidden;color:#102e36;font-weight:900;font-size:13px}
+.team-average .avg-symbol{background:#78b900;color:white;padding:3px 5px}.team-average .avg-value{padding:3px 5px}
+.dotplayer{position:absolute;transform:translate(-50%,-50%);width:clamp(46px,15%,64px);text-align:center;z-index:2;display:flex;flex-direction:column;align-items:center;gap:1px}
+.player-photo{display:none!important}
+.face{width:24px;height:24px;border-radius:50%;background:#f5fbfa;border:2px solid #d9efea;margin:0 auto;display:grid;place-items:center;font-size:9px;font-weight:900;color:#0b3b32;box-shadow:0 1px 3px #0003}
+.player-flags{display:flex;gap:2px;align-items:center;justify-content:center;min-height:0;position:absolute;right:0;top:-2px;z-index:3}
+.player-flag{width:13px;height:13px;background:#fff;border:1px solid #d8e5e2;border-radius:4px;display:grid;place-items:center;font-size:8px;line-height:1}
+.player-flag.yellow{color:#f2bd00}.player-flag.red{color:#df2929}.player-flag.sub{color:#0a9c58}.player-flag.goal{color:#0b3340}
+.player-nameplate{display:block;background:#073c32;color:#fff;border-radius:5px;padding:2px 4px;font-size:9px;line-height:1.15;font-weight:700;white-space:nowrap;box-shadow:0 2px 3px #0004;max-width:100%;width:100%;overflow:hidden;text-overflow:ellipsis}
+.player-number{color:#fff;font-weight:800}
+.rate{display:inline-block;background:#70b900;color:#fff;border-radius:8px;padding:2px 5px;font-size:10px;font-weight:900;margin:0;position:static;line-height:1.05;box-shadow:0 1px 2px #0002}
+.rate.mid{background:#f2a900;color:#17352f}.rate.low{background:#e77b00;color:white}
+.tactic-foot{display:none}
+@media(max-width:780px){.pitchwrap{padding:0;gap:10px}.tactic-head{height:42px;padding:0 8px}.tactic-head .formation-chip,.tactic-head .opponent-formation{font-size:15px;letter-spacing:.8px}.tactic-head .tactic-title{font-size:14px}.tactic-pitch-area{padding:8px 0 10px}.pitch{height:auto;aspect-ratio:1.32/1;min-height:250px;max-height:330px;border-width:1px}.pitch:before{border-width:1px}.pitch:after{width:22%;left:39%;top:39%;border-width:1px}.pitch .area{border-width:1px}.pitch .area:after{border-width:1px}.team-summary{left:6px;top:6px;gap:5px}.team-summary img{width:27px;height:27px}.team-average{font-size:11px}.team-average .avg-symbol,.team-average .avg-value{padding:2px 4px}.dotplayer{width:clamp(44px,15%,60px)}.face{width:21px;height:21px;font-size:8px}.player-nameplate{font-size:8px;padding:2px 3px}.rate{font-size:9px;padding:2px 4px}.player-flag{width:12px;height:12px;font-size:7px}}
+.lineup-editor-card{background:#f7f9f9;border:1px solid #e2e8e9;border-radius:13px;padding:13px;margin:10px 0}
+.lineup-editor-card h3{margin:0 0 8px;font-size:15px;color:#17343d}
+.formation-presets{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 10px}
+.formation-preset{border:1px solid #dce4e5;background:#fff;color:#53666b;border-radius:18px;padding:6px 9px;font-size:10px;font-weight:800}
+.formation-preset:hover,.formation-preset:focus{background:#eaf5f0;border-color:#a8d6bf;color:#08784a}
+.player-form{background:#fff;border:1px solid #e1e7e8;border-radius:11px;padding:11px;margin-top:12px}
+.player-form-title{font-size:12px;font-weight:800;color:#29444b;margin-bottom:4px}
+@media(max-width:780px){.pitchwrap{padding:0;gap:12px}.tactic-head{height:54px;padding:0 10px}.tactic-head .formation-chip,.tactic-head .opponent-formation{font-size:16px;letter-spacing:1px}.tactic-head .tactic-title{font-size:15px}.tactic-pitch-area{padding:30px 10px 15px}.pitch{height:430px;border-width:3px}.pitch:before{border-width:3px}.pitch:after{width:130px;height:130px;left:calc(50% - 65px);top:calc(50% - 65px);border-width:3px}.pitch .area{border-width:3px}.pitch .area:after{border-width:2px}.team-summary{left:8px;top:8px;gap:7px}.team-summary img{width:42px;height:42px}.team-average{font-size:15px;border-width:2px}.team-average .avg-symbol{padding:3px 6px}.team-average .avg-value{padding:3px 6px}.dotplayer{width:clamp(58px,18%,90px)}.player-photo{width:52px;height:58px}.face{width:36px;height:36px;font-size:12px}.player-nameplate{font-size:10px;padding:4px 5px;gap:2px}.rate{font-size:13px;padding:3px 5px;right:-2px}.player-flag{width:18px;height:18px;font-size:11px}.player-flags{right:-3px;top:0}}
+
+
+</style>
+
+<meta name="theme-color" content="#06232c">
+<meta name="description" content="Uređivač nogometnih utakmica, rezultata, događaja, statistike i sastava.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png" sizes="192x192">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Rezultati">
+
+</head>
+<body>
+<div class="shell">
+<section class="phone">
+<header class="top"><span class="back">‹</span><span class="ball">⚽</span><span id="sportTitle">Nogomet ▾</span><span class="right">⇧ ☆</span></header>
+<div class="competition"><img class="compicon" id="compLogo" alt="" hidden><span id="compEmoji" style="font-size:28px">🏆</span><span class="compname"><span id="compPrefix">EUROPA:</span> <b id="comp"></b></span><span class="chev">›</span></div>
+<section class="match">
+<div class="matchtop" id="date"></div>
+<div class="matchgrid">
+<div class="teamhero"><span class="star" id="starA">☆</span><div class="heroLogo" id="flagA"></div><div class="teamname"><span id="teamA"></span><span class="qualifier" id="qualA"></span></div></div>
+<div class="scoreblock"><div class="score" id="score"></div><div class="status" id="status"></div><div class="penpill" id="penScore" hidden></div></div>
+<div class="teamhero"><span class="star" id="starB">☆</span><div class="heroLogo" id="flagB"></div><div class="teamname"><span id="teamB"></span><span class="qualifier" id="qualB"></span></div></div>
+</div><div class="venue" id="venue"></div>
+</section>
+<nav class="tabs">
+<button class="tab active" data-view="details">DETALJI</button><button class="tab" data-view="stats">STATISTIKA</button><button class="tab" data-view="lineups">SASTAVI</button><button class="tab" data-view="players">STATISTIKA IGRAČA</button>
+</nav>
+<div class="view" id="view"></div>
+</section>
+<section class="editor">
+<h2>Uređivač utakmice</h2>
+<div class="muted">Ovo je tvoj kalup. Mijenjaš podatke u editoru, a prikaz utakmice se automatski osvježava. Podaci se čuvaju u ovom pregledniku.</div>
+<div class="editornav">
+<button class="edtab active" data-edit="match">Utakmica</button>
+<button class="edtab" data-edit="events">Događaji</button>
+<button class="edtab" data-edit="stats">Statistika</button>
+<button class="edtab" data-edit="lineups">Sastavi</button>
+<button class="edtab" data-edit="players">Ocjene</button>
+</div>
+<div id="editorbody"></div>
+<div class="btnrow">
+<button class="btn dark" id="save">Sačuvaj</button>
+<button class="btn secondary" id="export">Izvezi podatke</button>
+<button class="btn secondary" id="import">Uvezi podatke</button>
+<button class="btn secondary" id="reset">Vrati demo</button>
+<input type="file" id="file" accept="application/json" hidden>
+</div>
+<div class="help"><b>Kako koristiš:</b> unesi novu utakmicu, zatim dodaj golove/kartone/izmjene, popuni statistiku i sastave. Klikni Sačuvaj. Za sljedeću utakmicu možeš promijeniti sve podatke ili izvesti JSON kopiju.</div>
+</section>
+</div>
+<script>
+const demo={"competition":"CHAMPIONS LEAGUE FINAL","date":"Kick Off from Fußball Arena München, München","status":"Kraj","a":{"name":"Manchester City","flag":"","rank":"","score":0,"logo":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIj48Y2lyY2xlIGN4PSIxMDAiIGN5PSIxMDAiIHI9Ijk2IiBmaWxsPSIjOGZjNWU4IiBzdHJva2U9IiNmZmYiIHN0cm9rZS13aWR0aD0iNSIvPjxjaXJjbGUgY3g9IjEwMCIgY3k9IjEwMCIgcj0iNzgiIGZpbGw9IiNmZmYiIHN0cm9rZT0iIzE3M2I2MyIgc3Ryb2tlLXdpZHRoPSIzIi8+PHRleHQgeD0iMTAwIiB5PSIzNCIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE1IiBmb250LXdlaWdodD0iYm9sZCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iIzE3M2I2MyI+TUFOQ0hFU1RFUjwvdGV4dD48dGV4dCB4PSIxMDAiIHk9IjE3NCIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE2IiBmb250LXdlaWdodD0iYm9sZCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iIzE3M2I2MyI+Q0lUWTwvdGV4dD48dGV4dCB4PSI1MCIgeT0iMTA1IiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTciIGZvbnQtd2VpZ2h0PSJib2xkIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjMTczYjYzIj4xODwvdGV4dD48dGV4dCB4PSIxNTAiIHk9IjEwNSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE3IiBmb250LXdlaWdodD0iYm9sZCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iIzE3M2I2MyI+OTQ8L3RleHQ+PHBhdGggZD0iTTcwIDY1IEwxMzAgNjUgTDEzMCAxMzAgTDEwMCAxNTEgTDcwIDEzMFoiIGZpbGw9IiNmZmYiIHN0cm9rZT0iIzE3M2I2MyIgc3Ryb2tlLXdpZHRoPSIzIi8+PHBhdGggZD0iTTc4IDg1IEwxMjIgODUgTDEwMCA2N1oiIGZpbGw9IiNkNmE2M2EiIHN0cm9rZT0iIzE3M2I2MyIgc3Ryb2tlLXdpZHRoPSIyIi8+PHBhdGggZD0iTTgzIDg2IFYxMTcgTTEwMCA4NiBWMTE3IE0xMTcgODYgVjExNyIgc3Ryb2tlPSIjMTczYjYzIiBzdHJva2Utd2lkdGg9IjMiLz48cGF0aCBkPSJNNzUgMTIxIEwxMjUgMTIxIiBzdHJva2U9IiNjNTJiMzkiIHN0cm9rZS13aWR0aD0iNSIvPjxwYXRoIGQ9Ik0xMDAgMTI1IEM4OCAxMTcgODQgMTMyIDEwMCAxNDIgQzExNiAxMzIgMTEyIDExNyAxMDAgMTI1WiIgZmlsbD0iI2M1MmIzOSIvPjwvc3ZnPg=="},"b":{"name":"Liverpool","flag":"","rank":"","score":1,"logo":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIj48cGF0aCBkPSJNMTAwIDggQzg4IDI0IDgzIDM0IDg4IDQ5IEM3MiA0MiA2NSA1NSA3MyA2OCBDNTUgNjggNTEgODQgNjQgOTUgTDU1IDE1NyBMMTQ1IDE1NyBMMTM2IDk1IEMxNDkgODQgMTQ1IDY4IDEyNyA2OCBDMTM1IDU1IDEyOCA0MiAxMTIgNDkgQzExNyAzNCAxMTIgMjQgMTAwIDhaIiBmaWxsPSIjYzgxMDJlIiBzdHJva2U9IiMwODdhNjIiIHN0cm9rZS13aWR0aD0iNSIvPjxwYXRoIGQ9Ik0xMDAgMzcgQzkwIDUxIDk0IDY0IDEwMCA3MyBDMTA2IDY0IDExMCA1MSAxMDAgMzdaIiBmaWxsPSIjZmZmIi8+PHBhdGggZD0iTTk5IDcyIEM4MSA2NCA3OCA4MyA5MSA5MSBDNzcgOTggODUgMTE1IDk5IDEwOCBDMTEzIDExNSAxMjEgOTggMTA3IDkxIEMxMjAgODMgMTE3IDY0IDk5IDcyWiIgZmlsbD0iI2ZmZiIvPjxwYXRoIGQ9Ik05MSA4NyBMMTA5IDg3IEwxMDUgMTI1IEw5NSAxMjVaIiBmaWxsPSIjZmZmIi8+PHRleHQgeD0iMTAwIiB5PSIxNDUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNyIgZm9udC13ZWlnaHQ9ImJvbGQiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiNmZmYiPkwuRi5DLjwvdGV4dD48cGF0aCBkPSJNNDggMTYyIEgxNTIiIHN0cm9rZT0iIzA4N2E2MiIgc3Ryb2tlLXdpZHRoPSI3Ii8+PHRleHQgeD0iMTAwIiB5PSIxODUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxMCIgZm9udC13ZWlnaHQ9ImJvbGQiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiNjODEwMmUiPllPVSdMTCBORVZFUiBXQUxLIEFMT05FPC90ZXh0Pjwvc3ZnPg=="},"events":[{"half":2,"minute":"86'","side":"b","type":"goal","score":"0 - 1","player":"Arthur López","assist":"","detail":""}],"stats":[{"label":"Shots","a":"5","b":"11","av":31,"bv":69,"half":"all"},{"label":"On Target","a":"3","b":"4","av":43,"bv":57,"half":"all"},{"label":"xG","a":"0.46","b":"1.20","av":28,"bv":72,"half":"all"},{"label":"Off Target","a":"1","b":"4","av":20,"bv":80,"half":"all"},{"label":"Clear Cut Chances","a":"0","b":"1","av":0,"bv":100,"half":"all"},{"label":"Possession","a":"50%","b":"50%","av":50,"bv":50,"half":"all"},{"label":"Corners","a":"2","b":"11","av":15,"bv":85,"half":"all"},{"label":"Fouls","a":"12","b":"14","av":46,"bv":54,"half":"all"},{"label":"Passes Completed","a":"89%","b":"89%","av":50,"bv":50,"extraA":"459/515","extraB":"452/507","half":"all"},{"label":"Tackles Won","a":"78%","b":"82%","av":49,"bv":51,"extraA":"25/32","extraB":"31/38","half":"all"},{"label":"Headers Won","a":"68%","b":"30%","av":69,"bv":31,"extraA":"21/31","extraB":"10/33","half":"all"},{"label":"Yellow Cards","a":"0","b":"0","av":50,"bv":50,"half":"all"},{"label":"Red Cards","a":"0","b":"0","av":50,"bv":50,"half":"all"},{"label":"Average Rating","a":"6.65","b":"7.09","av":48,"bv":52,"half":"all"},{"label":"High Intensity Sprints","a":"142","b":"150","av":49,"bv":51,"half":"all"}],"lineups":{"a":{"formation":"4-3-3","players":[["1","Seijichiro Kaneko","6.8",5,50],["2","Sandrinho","6.5",21,57],["16","Matias Dainelli","6.8",21,29],["12","Richard Tipple","6.2",34,50],["8","Rúben Pinheiral","6.9",52,57],["17","Jenisej Šalić","6.4",21,84],["15","Faustin Banza","6.9",52,29],["19","Bixente Mansur","6.9",73,84],["14","Ramón Juliá","6.7",73,5],["5","Eric Robert","6.6",21,5],["10","Aguinaldo","6.8",91,50]]},"b":{"formation":"4-2-4","players":[["13","Orestis Lygos","7.7",5,50],["3","David McCall","6.9",21,83],["2","Edin Mesic","7.0",21,53],["5","Ryan van der Veen","6.8",21,30],["26","Scott Walsh","6.8",21,5],["8","Osama Kanté","7.1",41,55],["16","Hans Dold","6.8",41,30],["10","Fresnel Kanda","7.7",72,83],["7","Marcel Rery","7.1",74,42],["57","Rhain Rowney","6.4",72,5],["23","Arthur López","7.7",92,50]]}},"playersA":[["Seijichiro Kaneko","6.8"],["Sandrinho","6.5"],["Matias Dainelli","6.8"],["Richard Tipple","6.2"],["Rúben Pinheiral","6.9"],["Jenisej Šalić","6.4"],["Faustin Banza","6.9"],["Bixente Mansur","6.9"],["Ramón Juliá","6.7"],["Eric Robert","6.6"],["Aguinaldo","6.8"]],"playersB":[["Orestis Lygos","7.7"],["David McCall","6.9"],["Edin Mesic","7.0"],["Ryan van der Veen","6.8"],["Scott Walsh","6.8"],["Osama Kanté","7.1"],["Hans Dold","6.8"],["Fresnel Kanda","7.7"],["Marcel Rery","7.1"],["Rhain Rowney","6.4"],["Arthur López","7.7"]]};
+demo.extraTime=false; demo.penalties=false; demo.showPenaltyPill=false;
+demo.sportTitle="Nogomet ▾"; demo.competitionPrefix="EUROPA:"; demo.competitionLogo=""; demo.venue="Fußball Arena München, München"; demo.penaltyScore=""; demo.winnerSide=""; demo.highlightWinner=false; demo.showStars=true; demo.qualifierA=""; demo.qualifierB="";
+// Header example from the supplied reference image.
+demo.competitionLogo="";
+let data=structuredClone(demo), activeView="details", activeEditor="match", statHalf="all";
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+function save(){localStorage.setItem("rezultati-kalup-header-edit-v2",JSON.stringify(data));render();alert("Sačuvano u ovom pregledniku.");}
+function renderHeader(){
+ $("sportTitle").textContent=data.sportTitle||"Nogomet ▾";
+ $("compPrefix").textContent=data.competitionPrefix||"EUROPA:";
+ $("comp").textContent=data.competition||"";
+ if(data.competitionLogo){$("compLogo").src=data.competitionLogo;$("compLogo").hidden=false;$("compEmoji").hidden=true;}else{$("compLogo").hidden=true;$("compEmoji").hidden=false;$("compEmoji").textContent=data.competitionEmoji||"🏆";}
+ $("date").textContent=data.date||"";
+ const logo=(side)=>{const t=data[side];return t.logo?`<img src="${t.logo}" alt="Logo ${esc(t.name)}">`:`<span class="initial">${esc(t.flag||t.name.slice(0,3).toUpperCase())}</span>`;};
+ $("flagA").innerHTML=logo("a");$("flagB").innerHTML=logo("b");
+ $("teamA").textContent=data.a.name;$("teamB").textContent=data.b.name;$("teamA").classList.toggle("winner-highlight",!!data.highlightWinner&&data.winnerSide==="a");$("teamB").classList.toggle("winner-highlight",!!data.highlightWinner&&data.winnerSide==="b");
+ $("score").textContent=data.a.score+" - "+data.b.score;$("status").textContent=data.status||"";
+ $("penScore").textContent=data.penaltyScore||"";$("penScore").hidden=!(data.showPenaltyPill && data.penaltyScore);
+ $("venue").textContent=data.venue||"";$("venue").style.display=data.venue?"inline-block":"none";
+ $("starA").style.display=data.showStars===false?"none":"block";$("starB").style.display=data.showStars===false?"none":"block";
+ $("qualA").textContent=data.qualifierA||"";$("qualB").textContent=data.qualifierB||"";
+}
+
+const ASSET_MISS="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABwAAAAYCAYAAADpnJ2CAAADF0lEQVR4nL2VS0wbVxSGv5nxGIPscSNFVCg2itRKUQ3KMiRRsiyp1B0g3G5Rqy6D2nSJKtRlYhW2DS3LFGeyr7qNGpKusa1IiSoYI6TWhdypbE884zldGLmFAWKTNP/y3HvOdx73oYmI8Balv00YQOywIQgC2u32qQMahoFhGGiaduS6JiIShiGe59FqtTpZxGLHOpwkEUFECIKAWCxGPB5nYGDgINDzPPE8D9M0icfjxGKRok8F9n2fZrMJQCqVQtc709OUUpJMJruGNy3P8/A8j1Qq1Wl1GIZymvb1o1arRbPZxLKszgz/V9q+Go0GQBSoija+U32t4MkbkyTGcwdsIoJSKnot1JoNaJjZc6eCNdafYGYzEaCmaWiaFgUCpPPTpGdnIna/Wu1WnxjLoVtWZM/O/K1jk9F1/WjgfxW6Lrt3V9m9+yOh6x5MbHaGs1/dxMxmXhXmX+hJi75TZWv6U2qFJRLjOUbtewxdmWBk6Tbp2WlU0eb5xHVU0X4zwO25L2g5VYYXFxi172FmM/jVbXxnm5GlO7z35CFmNsPO/Nc0Hj1+PaAq2nilMkba4mWpQq2wzO8ffszZL2/iOw7PJ67z98+/YGY67awVlnsCHjvDl6UyumXx7uICvlNld2WV9397iG5ZpPMz7Mzfwi0+YHhxgVpBaKw/jsy4rwq9jTLx0Qxt1+XM53OYmXN4G+Xuur/f6qGrl/FKFQbGcrR7AB5bYWI8R1u5qLUHpGdnSH40yR/ffMvA2AedhEoVhq5eRhVtEuM5vI0yxhHXpGdg8sbk/lwEVbTZW1lleHGhG9R3qtQKy6iizdCVCYAj72VEckh/ff+D1H9dFxGRzam8bE59IpWR8/Lnne8O7AuUkqcXLsqzS9fk2aVr0tpyRETkxU/3u/6H5bquRICHg25O5aUycn4fuiStLUfqj9a7iTy9cFFerN0/KUxXe3t70tNvodZsdldWuyc3dF10y+Kd/DRnPpvr6aUJgoB6vd7f9xS6Lm3VOYn9PGcASikGBwfRgiAQwzD6cu5HIkKj0SAMQ1KpFP8A33nxZ2f44eYAAAAASUVORK5CYII=";
+const ASSET_OWN="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABwAAAAcCAYAAAByDd+UAAAC6UlEQVR4nL2WX1LiQBDGv0AklCg1W75YW2uZG2y4QW5AbgCcQG4AngA8AXgCyhOEGxAeqdRKpLQUSyFZSEiAofcByULxRx6Ufkpmvunf9Mx0zwhPT0+EA5rguu5hgUR0UKDouu6XORMEAYIgIBqNQhRFRCKRdY3v+18eIecc0+kUACBJEiRJ+g/8ziXlnGM0GgEAEonEfAUOsYe+72M8HuP09HR/4Kheh99sYtpugzsOjmQZ8d+/EVMUHMnyp+M9z4MgCADtMN7v01uxSCZj1ALIZIwsRaF7WSZLUagFUAugjqrSqNHY5YpmsxnZtk1bgeN2m/7IMt3LMvXK5dChp+vUUdVwQoNajZ4zGWoB9FYs7oQOBoPNwAWso6rE+/2V9udMhkzGyKlWV8b0SiVqAdTN57cCh8PhZqClKGQyRv5HVMtL+3p1RXalEkY/qNVCzSJSV9f3B/qNBrUAetS0MEqTMeqoKo3b7RXtArys6agqPWra/kC7UiGTsfD/NZ8nS1E2Olie4CKqXrlM97K8FbheewBIihJ+nxUKCAwDM9veeNz75TKS2SyOVRUAPk2RNWCUMQSGgYllzQWM4SSdRv/mZm3wxLLw9/YWZ4VC2BYYBiKMbQVuTPyHVAoz28YvXceRLGN4d4eXbBYnmrai47aNmW3jQtcBAO/X13gvFnFerSKZyazBXNfdDPQNA51UCpKi4ELX8ZzLAQBO0ukV3cxx8F4s4methunDA16yWSSzWZxXKhujc113e6UZ1GphZTEZW8nHZeuVSmQyRiZj9KhpW3VE88TfWUsnloWXXA6jeh0RxiApCo5VFZGPffbqdUwtCxHGcFYo4Ec+v80VAMBxnP2K98Sy4NXrGBsG/GYTwPwwxS4vkdC08ITuMt/3wTk/3PUUBAGSySTE7wRxzuF5HgDM70JBgBgEwbeAOOcgIsTjccRisbBPXLw9vsoWjyhJkhCNRtf7D7GHyyZyzg/Jg9jtdg8K/AfuxYv3+zv++AAAAABJRU5ErkJggg==";
+const ASSET_CARD="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAdCAYAAAC9pNwMAAABm0lEQVR4nM3XTXLCIBgG4BdSQNAudKcH6AW8QLyMPUb1Gl6mXqTbLttFRxAYoAvHmLb+RGLavjOZyST5eMJMSL6QlFLCH+Tu2MEQAqy18N4jxpg1MKUUjDEIIVAUxY/z5PuMjTFwzkEIAcbY0aImCSHAew9rLTjnkFKehjebDQghUEplYaeitUZKCf1+vzpG9zvGmE5QAFBKgRACY8xXOIQA51wnaB13ziGEcICttRBCdIbuI4SAtfYAe+/BGLtY+LZc4oWQo9vrbHaxnjEG7/0BjjFefHrflku8LxYnz5v1+iJeFEW1POnZK2uDnkOrfKx3W4M0gptmsmp+7c3ga9CbwZMVIKe/DA/n16Ot4eEcGD3m1WbDbdBsuC2aBctpezQLvnbZ3AS+FXoVnLtsWsGyLDFq8q4elMB92RymlFYf6JMZPwHjM/igBB6ezw4RQgClu7mSlFLSWoNSil6v1+huc7PdbhFjhFJqN+N6Z9Bl6p0OBXYfaM45tNadoVprcM6rhqN6uKSUSCl1gu/b23pv/T8a+npR178wn6azx3xOzEf/AAAAAElFTkSuQmCC";
+const ASSET_OWNBALL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAEUklEQVR4nNVVXUzTVxw9t3+FyiZEBmaNZRhdgIFzFCoEhSoxEaLgB7bGRJcoaKcS0L2JCbbQqFmMBrM4zEJi4gduZTyo0YfNwDajS1RwCnSDQYGqVCm00ELBFjl7GJI6gZltD9vv6X6ce869v/v7AP7vJt4ERFLAaBQ1FosAAF18PGE0UgjBf6ROs1miThc07T4g0WCY9bfI7+n1syeJyBXuy5e/c5WW/vRs3747rsrK7zkysidAKIhms/TG5PWAHAA8TU1bR9LSLrbOm9fGrCwyK4sj6enktm20xsS8sMvl1/qOHy+ZPFdfP/NrSAoDIAOAX3btyupNS3Ny/37acnJszUDR04ICs1WtdjYBW9uVynPU6/k4NZX+PXu+dJLvAX+4dUYBAGhtaPhgSKPpfBIe3uYsKTlBcgkADJw5c+5xQoKHZAwAuOvr99oyMx8wO5sDxcU1A7dvhxOQ0WCQvU4+segg53oyMq76ExOfDg8PqwHAVlGxxLlhwzHm53MoO5tP9frxjqio3IlLxbi3bLnL5GT2nTqVT/IVgcnByxD0rlmz6m2bLccWEWH3VVYqmxWK9Lfs9oax9vYDz4KDb43p9TVD1dWWRRkZV1wnTnzVKoR8KCzM7nE4wJaW3QDeEWVl49O5SN5bWHjuUUSEx7Zq1ZPeZcs4mJBAR2ys3W2xrAzAhTiOHXvQrlQ+dyclsSMmxtW9fv2Ab+NGdq5cGTfTHyi9JSVsFcIMAP3l5SZqtX5LSEgSAJh1uiCazRIBQVJ6nJNj7k5JeUYyZPDs2c+5bt14E7A4kPPVz+jvJ0JDEZyYOAYA4aWlxo7r1+9JISGxAOCyWokbN2QARF9BgWpBXFze7Li4r4UQ3uDk5N8GR0eFAIJnesH8/oMHB39VKr8lORsArGp1DY8edTnJsEBs19q1xd3R0VaSUQDgPH/+C+bmjjUD7wfiJhPDrNNJAJwjLS37F82ZU2XdvbsUwOF3jcY79pMntayr+6Fn+3Yv/X4hhPDP9XgW9kVGNgohHg1fu1boLyvTeVQqaXFDA5Cc/LqALj6eQogXJGvdmZl7lbW1hf1VVWZPV5ekkCRAo/kICgXg9wNBQcD9++h5+LCNZMGjvLxPo3y+CHtk5GFFUlIPDQbZlJFEUkZS6rlw4WMuX86OBQtuOVSqn6nXH/V5vSsGGxuXu+vqVtDnSx+9dOmQd8eO3s5Nm1r8S5fSo9VeISkHAMNUiQZMJpsgOb/bZDJ2qVQ+KhRsBD6zSFJeX3m51l1drW1PTc1rjYo6NL56NV8olRzdufOutaoqFoCYcPX09rJcAEC/yfSJY+HCq061mszPJ00msqKCLCwkNRq2hIbe5oED3zhtNg0AtBUVTR9Bf3ZVZ3S0/OX8eXOzafDIkZtdKSk3OxMTf+zdvPmm6/Tp6yQ/nDzzVzefUshgmFUfEAhTYnS6oCmL24S9Wcs0GGSB7bLGYhH/Wtv8z9vvclFDaL/k+bYAAAAASUVORK5CYII=";
+function eventPhase(e){return String(e.phase??e.half??1)}
+function phaseTitle(phase){return ({"1":"1. POLUVRIJEME","2":"2. POLUVRIJEME","et1":"1. PRODUŽETAK","et2":"2. PRODUŽETAK","pens":"PENAL SERIJA"})[phase]||"DOGAĐAJI"}
+function renderEvents(){
+ const order=["1","2","et1","et2","pens"];
+ const sorted=[...data.events].sort((a,b)=>order.indexOf(eventPhase(a))-order.indexOf(eventPhase(b)));
+ let out="",last="";
+ const goalNet=(miss)=>`<span class="penalty-icon ${miss?"miss":"scored"}" aria-label="${miss?"Promašen penal":"Pogođen penal"}"><img src="${ASSET_MISS}" alt=""></span>`;
+ const shootoutRows=(events)=>{
+  const list=[...events].sort((a,b)=>{
+   const na=parseInt(String(a.minute||'').replace(/[^0-9]/g,''),10)||0;
+   const nb=parseInt(String(b.minute||'').replace(/[^0-9]/g,''),10)||0;
+   return na-nb || (a.side==='a'?-1:1);
+  });
+  let scoreA=0,scoreB=0;
+  list.forEach(e=>{if(e.type==='shootout_goal'){if(e.side==='a')scoreA++;else scoreB++;}});
+  let html=`<div class="period shootout-heading"><span>PENALI</span><span>${scoreA} - ${scoreB}</span></div>`;
+  list.forEach(e=>{
+   const miss=e.type==='shootout_miss'||e.type==='missed_penalty';
+   const icon=goalNet(miss);
+   const n=esc(String(e.minute||'').replace(/[^0-9]/g,'')||'1');
+   if(e.side==='a'){
+    html+=`<div class="shootout-row home"><span class="shootout-number">${n}</span>${icon}<b>${esc(e.player)}</b><span class="shootout-note">${miss?'(Promašen penal)':'(Penal)'}</span></div>`;
+   }else{
+    html+=`<div class="shootout-row away"><span class="shootout-note">${miss?'(Promašen penal)':'(Penal)'}</span><b>${esc(e.player)}</b>${icon}<span class="shootout-number">${n}</span></div>`;
+   }
+  });
+  return html;
+ };
+ for(const phase of order){
+  const phaseEvents=sorted.filter(e=>eventPhase(e)===phase);
+  if(!phaseEvents.length)continue;
+  if(phase==='pens'){
+   out+=shootoutRows(phaseEvents);
+   continue;
+  }
+  out+=`<div class="period"><span>${phaseTitle(phase)}</span><span>${esc(data.a.score)} - ${esc(data.b.score)}</span></div>`;
+  for(const e of phaseEvents){
+   const icon=(e.type==="goal"||e.type==="penalty"||e.type==="own_goal")?"⚽":e.type==="yellow"?"🟨":e.type==="second_yellow"?"🟨🟥":e.type==="red"?"🟥":e.type==="sub"?"🔄":e.type==="var"||e.type==="var_offside"||e.type==="var_handball"?"▣ VAR":"";
+   const redBall=`<img class="event-ball" src="${ASSET_OWNBALL}" alt="Autogol">`;
+   const isMiss=e.type==="missed_penalty";
+   const isGoal=e.type==="goal"||e.type==="penalty"||e.type==="own_goal";
+   let body="", rowClass="event";
+   if(e.type==="var"||e.type==="var_offside"||e.type==="var_handball"){
+    const varText=esc(e.type==="var_offside"?"Gol poništen – zaleđe":e.type==="var_handball"?"Gol poništen – igranje rukom":(e.player||"VAR"));
+    const varBadge=`<span class="scorepill">▣ VAR</span>`;
+    const varDetail=e.detail?`<span class="sub">(${esc(e.detail)})</span>`:"";
+    // Domaćin (lijevo): VAR oznaka pa opis. Gost (desno): opis pa VAR oznaka.
+    body=e.side==="b"?`<b>${varText}</b>${varDetail}${varBadge}`:`${varBadge}<b>${varText}</b>${varDetail}`;
+   } else if(isMiss){
+    rowClass+=" penalty-miss-event";
+    body=e.side==="b"?`<span class="sub miss-label">(Promašen penal)</span><b>${esc(e.player)}</b><img class="event-symbol" src="${ASSET_MISS}" alt="Promašen penal">`:`<img class="event-symbol" src="${ASSET_MISS}" alt="Promašen penal"><b>${esc(e.player)}</b><span class="sub miss-label">(Promašen penal)</span>`;
+   } else if(e.type==="penalty"){
+    // Home-side: icon, player, label. Away-side: label, player, score + ball.
+    body=e.side==="b"
+      ? `<span class="sub">(Penal)</span><b>${esc(e.player)}</b><span class="scorepill">${esc(e.score)} ⚽</span>`
+      : `<span class="badgeicon">⚽</span><b>${esc(e.player)}</b><span class="sub">(Penal)</span>`;
+   } else if(e.type==="own_goal"){
+    // e.side is the team of the player who scored the own goal.
+    // The event is displayed on the opposite (credited) team's side.
+    const creditedSide=e.creditedSide||(e.side==="a"?"b":"a");
+    rowClass+=" own-event "+(creditedSide==="b"?"away":"home");
+    body=e.side==="a"
+      ? `<span class="sub own-label">(Autogol)</span><b>${esc(e.player)}</b><span class="own-score">${esc(e.score)}${redBall}</span>`
+      : `<span class="own-score">${esc(e.score)}${redBall}</span><b>${esc(e.player)}</b><span class="sub own-label">(Autogol)</span>`;
+   } else if(e.type==="second_yellow"){
+    body=`<img class="event-symbol" src="${ASSET_CARD}" alt="Drugi žuti – crveni"><b>${esc(e.player)}</b>`;
+   } else if(e.side==="a"){
+    body=`<span class="scorepill">${icon} ${esc(e.score)}</span><b>${esc(e.player)}</b>${e.assist?`<span class="sub">(${esc(e.assist)})</span>`:""}${e.detail?`<span>(${esc(e.detail)})</span>`:""}`;
+   } else {
+    body=`${e.assist?`<span class="sub">(${esc(e.assist)})</span>`:""}<b>${esc(e.player)}</b>${isGoal?`<span class="scorepill">${esc(e.score)} ${icon}</span>`:`<span class="badgeicon">${icon}</span>`}`;
+   }
+   const minute=esc(e.minute);
+   // Minuta prati stranu ekipe kojoj se pripisuje događaj:
+   // domaćin lijevo, gost desno. Kod autogola koristi se strana kojoj je gol priznat.
+   const displaySide=e.type==="own_goal"
+     ? (e.creditedSide||(e.side==="a"?"b":"a"))
+     : e.side;
+   if(displaySide==="b"){
+    out+=`<div class="${rowClass}"><div class="evbody right">${body}</div><span class="minute">${minute}</span></div>`;
+   }else{
+    out+=`<div class="${rowClass}"><span class="minute">${minute}</span><div class="evbody">${body}</div></div>`;
+   }
+  }
+ }
+ $("view").innerHTML=out||'<div class="note">Nema unesenih događaja.</div>';
+}
+
+function renderStats(){
+let rows=data.stats.filter(x=>statHalf==="all"||x.half===statHalf);
+$("view").innerHTML=`<div class="statfilters"><button class="pill ${statHalf==="all"?"active":""}" data-half="all">MEČ</button><button class="pill ${statHalf==="1"?"active":""}" data-half="1">1. POLUVRIJEME</button><button class="pill ${statHalf==="2"?"active":""}" data-half="2">2. POLUVRIJEME</button></div><div class="heading">Najbitnije</div>`+rows.map(x=>`<div class="statrow"><div class="statvals"><span>${esc(x.a)}${x.extraA?`<div class="subval">(${esc(x.extraA)})</div>`:""}</span><span>${esc(x.label)}</span><span>${esc(x.b)}${x.extraB?`<div class="subval">(${esc(x.extraB)})</div>`:""}</span></div><div class="bar"><i style="width:${Number(x.av)||0}%"></i><i style="width:${Number(x.bv)||0}%"></i></div></div>`).join("")+'<div class="note">Statistika se uređuje u panelu desno.</div>';
+document.querySelectorAll("[data-half]").forEach(b=>b.onclick=()=>{statHalf=b.dataset.half;renderStats()});
+}
+function pitchPlayers(team){
+return team.players.map(p=>{
+ const jersey=esc((p[0]||"").toString());
+ const badge=p[6]||"";
+ const flags=badge?`<div class="player-flags">${badge.split(",").map(v=>v==="yellow"?`<span class="player-flag yellow">▰</span>`:v==="red"?`<span class="player-flag red">▰</span>`:v==="sub"?`<span class="player-flag sub">↻</span>`:v==="goal"?`<span class="player-flag goal">⚽</span>`:v==="pen"?`<span class="player-flag goal">⚽</span>`:"").join("")}</div>`:"";
+ const x=Math.min(91,Math.max(9,Number(p[3])||50));
+ const y=Math.min(90,Math.max(10,Number(p[4])||50));
+ return `<div class="dotplayer" style="left:${x}%;top:${y}%"><div class="face">${jersey}</div>${flags}<span class="rate ${Number(p[2])<6?"low":Number(p[2])<7?"mid":""}">${esc(p[2])}</span><span class="player-nameplate"><span class="player-number">${esc(p[0])}</span> ${esc(p[1])}</span></div>`;
+}).join("");
+}
+function renderLineups(){
+const card=(side)=>{
+ const team=data.lineups[side],other=data.lineups[side==="a"?"b":"a"],club=data[side],players=team.players;
+ const avg=players.length?(players.reduce((sum,p)=>sum+(parseFloat(p[2])||0),0)/players.length).toFixed(1):"—";
+ const logo=club.logo?`<img src="${club.logo}" alt="">`:"";
+ return `<section class="tactic-card"><div class="tactic-head"><span class="formation-chip">${esc(team.formation||"—")}</span><span class="tactic-title">FORMACIJE</span><span class="opponent-formation">${esc(other.formation||"—")}</span></div><div class="tactic-pitch-area"><div class="pitch"><div class="area top"></div><div class="area bottom"></div><span class="pitch-mark top"></span><span class="pitch-mark bottom"></span><div class="team-summary">${logo}<div class="team-average"><span class="avg-symbol">Ø</span><span class="avg-value">${avg}</span></div></div>${pitchPlayers(team)}</div></div></section>`;
+};
+$("view").innerHTML=`<div class="pitchwrap">${card("a")}${card("b")}</div>`;
+}
+function renderPlayers(){
+const list=(arr)=>arr.map(p=>`<div class="item"><span>${esc(p[0])}</span><b>${esc(p[1])}</b></div>`).join("");
+$("view").innerHTML=`<div class="heading">Statistika igrača</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:0 15px"><div><b>${esc(data.a.name)}</b>${list(data.playersA)}</div><div><b>${esc(data.b.name)}</b>${list(data.playersB)}</div></div>`;
+}
+function render(){renderHeader();document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("active",b.dataset.view===activeView));if(activeView==="details")renderEvents();if(activeView==="stats")renderStats();if(activeView==="lineups")renderLineups();if(activeView==="players")renderPlayers();}
+document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>{activeView=b.dataset.view;render()});
+document.querySelectorAll(".edtab").forEach(b=>b.onclick=()=>{activeEditor=b.dataset.edit;renderEditor()});
+function field(label,key,value,full=false,type="text"){return `<div class="field ${full?"full":""}"><label>${label}</label><input id="${key}" type="${type}" data-key="${key}" value="${esc(value)}"></div>`}
+function renderEditor(){
+document.querySelectorAll(".edtab").forEach(b=>b.classList.toggle("active",b.dataset.edit===activeEditor));
+let html="";
+if(activeEditor==="match"){
+html=`<h3>Zaglavlje i rezultat</h3><div class="formgrid">
+${field("Naziv sporta u gornjoj traci","sportTitle",data.sportTitle||"Nogomet ▾",true)}
+${field("Oznaka takmičenja","competitionPrefix",data.competitionPrefix||"EUROPA:")}
+${field("Takmičenje / kolo","competition",data.competition,true)}
+<div class="field"><label>Ikona takmičenja (PNG/JPG/SVG)</label><input type="file" id="compLogoUpload" accept="image/png,image/jpeg,image/webp,image/svg+xml"></div>
+${field("Emoji ikona ako nema loga","competitionEmoji",data.competitionEmoji||"🏆")}
+${field("Datum i vrijeme","date",data.date)}
+${field("Status utakmice","status",data.status)}
+${field("Naziv prve ekipe","a.name",data.a.name)}
+${field("Oznaka ako nema loga","a.flag",data.a.flag)}
+<div class="field"><label>Logo prve ekipe (PNG/JPG/SVG)</label><input type="file" id="logoA" accept="image/png,image/jpeg,image/webp,image/svg+xml"></div>
+${field("Golovi prve ekipe","a.score",data.a.score)}
+${field("Naziv druge ekipe","b.name",data.b.name)}
+${field("Oznaka ako nema loga","b.flag",data.b.flag)}
+<div class="field"><label>Logo druge ekipe (PNG/JPG/SVG)</label><input type="file" id="logoB" accept="image/png,image/jpeg,image/webp,image/svg+xml"></div>
+${field("Golovi druge ekipe","b.score",data.b.score)}
+<div class="field full"><label><input id="highlightWinner" type="checkbox" style="width:auto" ${data.highlightWinner?"checked":""}> Podebljaj tekst pobjedničke ekipe (crna boja)</label></div>
+<div class="field full"><label>Pobjednička ekipa</label><select id="winnerSide"><option value="">Nije odabrano</option><option value="a" ${data.winnerSide==="a"?"selected":""}>${esc(data.a.name)} (domaćin)</option><option value="b" ${data.winnerSide==="b"?"selected":""}>${esc(data.b.name)} (gost)</option></select></div>
+${field("Rezultat penal-serije (npr. PEN: 4-3)","penaltyScore",data.penaltyScore||"")}
+<div class="field"><label><input id="showPenaltyPill" type="checkbox" style="width:auto" ${data.showPenaltyPill?"checked":""}> Prikaži oznaku penal-serije ispod statusa</label></div>
+${field("Stadion / teren","venue",data.venue||"",true)}
+${field("Oznaka pored prve ekipe (npr. ↗)","qualifierA",data.qualifierA||"")}
+${field("Oznaka pored druge ekipe","qualifierB",data.qualifierB||"")}
+<div class="field"><label><input id="showStars" type="checkbox" style="width:auto" ${data.showStars===false?"":"checked"}> Prikaži zvjezdice pored ekipa</label></div>
+</div><div class="help">Ovdje možeš uređivati svaki element zaglavlja. Logotipe takmičenja i klubova dodaješ kao PNG, JPG, WEBP ili SVG. Ako nemaš logo, prikazat će se unesena oznaka ili emoji.</div><button class="btn" id="applyFields">Primijeni izmjene</button>`;
+}
+if(activeEditor==="events"){
+const phaseOptions=`<option value="1">1. poluvrijeme</option><option value="2">2. poluvrijeme</option><option value="et1" ${data.extraTime?"":"disabled"}>1. produžetak</option><option value="et2" ${data.extraTime?"":"disabled"}>2. produžetak</option><option value="pens" ${data.penalties?"":"disabled"}>Penal serija</option>`;
+html=`<h3>Događaji i periodi utakmice</h3>
+<div class="help">Uključi produžetke ili penal-seriju ako utakmica ode u dodatno vrijeme. Svaki događaj možeš naknadno urediti ili obrisati.</div>
+<div class="formgrid">
+<div class="field"><label><input id="enableET" type="checkbox" style="width:auto" ${data.extraTime?"checked":""}> Omogući produžetke (2 × 15 min)</label></div>
+<div class="field"><label><input id="enablePens" type="checkbox" style="width:auto" ${data.penalties?"checked":""}> Omogući penal-seriju</label></div>
+<div class="field full"><label>Period utakmice</label><select id="ePhase">${phaseOptions}</select></div>
+${field("Minuta / redni broj penala","eMinute","")}
+<div class="field"><label>Ekipa</label><select id="eSide"><option value="a">${esc(data.a.name)}</option><option value="b">${esc(data.b.name)}</option></select></div>
+<div class="field"><label>Vrsta događaja</label><select id="eType"><option value="goal">Gol</option><option value="penalty">Gol iz penala (tokom igre)</option><option value="shootout_goal">Pogođen penal – penal-serija</option><option value="shootout_miss">Promašen penal – penal-serija</option><option value="missed_penalty">Promašen penal – tokom igre</option><option value="own_goal_home">Autogol domaćina</option><option value="own_goal_away">Autogol gostujuće ekipe</option><option value="yellow">Žuti karton</option><option value="second_yellow">Drugi žuti karton (crveni)</option><option value="red">Direktni crveni karton</option><option value="sub">Izmjena</option><option value="var">VAR / poništen gol</option><option value="var_offside">VAR poništen gol – zaleđe</option><option value="var_handball">VAR poništen gol – igranje rukom</option></select></div>
+${field("Igrač","ePlayer","")}${field("Asistent / igrač koji izlazi","eAssist","")}
+${field("Rezultat nakon gola (npr. 1 - 0)","eScore","")}${field("Napomena","eDetail","")}
+</div><div class="btnrow"><button class="btn" id="addEvent">Dodaj događaj</button><button class="btn secondary" id="cancelEventEdit" style="display:none">Odustani od izmjene</button></div>
+<div class="list">${data.events.map((e,i)=>`<div class="item"><span>${esc(e.minute)} · ${esc(e.player)} · ${esc(({goal:"Gol",penalty:"Gol iz penala (tokom igre)",shootout_goal:"Pogođen penal – penal-serija",shootout_miss:"Promašen penal – penal-serija",missed_penalty:"Promašen penal – tokom igre",own_goal:"Autogol",own_goal_home:"Autogol domaćina",own_goal_away:"Autogol gostujuće ekipe",yellow:"Žuti karton",second_yellow:"Drugi žuti karton (crveni)",red:"Direktni crveni karton",sub:"Izmjena",var:"VAR / poništen gol",var_offside:"VAR – zaleđe",var_handball:"VAR – igranje rukom"})[e.type]||"Događaj")} · ${esc(phaseTitle(eventPhase(e)))}</span><span><button data-edit-event="${i}">Uredi</button> <button data-del-event="${i}">Obriši</button></span></div>`).join("")}</div>`;
+}
+if(activeEditor==="stats"){
+html=`<h3>Statističke stavke</h3><div class="help">Vrijednosti traka su relativni udjeli 0–100. Poluvrijeme određuje u kojem filteru se stavka prikazuje.</div>
+<div class="formgrid"><div class="field"><label>Naziv statistike</label><input id="sLabel" placeholder="Npr. Posjed lopte"></div><div class="field"><label>Poluvrijeme</label><select id="sHalf"><option value="all">Meč</option><option value="1">1. poluvrijeme</option><option value="2">2. poluvrijeme</option></select></div>
+${field("Vrijednost prve ekipe","sA","")}${field("Vrijednost druge ekipe","sB","")}
+${field("Udio prve ekipe 0–100","sAv","50","", "number")}${field("Udio druge ekipe 0–100","sBv","50","", "number")}
+${field("Dodatno ispod prve vrijednosti","sExtraA","")}${field("Dodatno ispod druge vrijednosti","sExtraB","")}
+</div><button class="btn" id="addStat">Dodaj statistiku</button><div class="list">${data.stats.map((s,i)=>`<div class="item"><span>${esc(s.label)}: ${esc(s.a)} – ${esc(s.b)}</span><span><button data-edit-stat="${i}">Uredi</button> <button data-del-stat="${i}">Obriši</button></span></div>`).join("")}</div>`;
+}
+if(activeEditor==="lineups"){
+html=`<h3>Formacije i taktika</h3><div class="lineup-editor-card"><h3>Odabir ekipe</h3><div class="field"><label>Ekipa za uređivanje</label><select id="lineupSide"><option value="a">${esc(data.a.name)}</option><option value="b">${esc(data.b.name)}</option></select></div><div class="field"><label>Formacija</label><input id="formation" value="${esc(data.lineups.a.formation)}" placeholder="Npr. 4-3-3"></div><div class="formation-presets"><button type="button" class="formation-preset" data-formation="4-3-3">4-3-3</button><button type="button" class="formation-preset" data-formation="4-2-3-1">4-2-3-1</button><button type="button" class="formation-preset" data-formation="4-4-2">4-4-2</button><button type="button" class="formation-preset" data-formation="3-5-2">3-5-2</button><button type="button" class="formation-preset" data-formation="3-4-3">3-4-3</button><button type="button" class="formation-preset" data-formation="4-2-4">4-2-4</button><button type="button" class="formation-preset" data-formation="5-3-2">5-3-2</button></div><div class="help">Izaberi formaciju ili upiši vlastitu. Raspored igrača na terenu podešavaš njihovim X/Y pozicijama.</div></div><div class="lineup-editor-card"><div class="player-form-title">UREĐIVANJE IGRAČA</div><div class="help">Dodaj igrača ili izaberi Uredi na postojećem. X određuje lijevo–desno, Y gore–dolje na terenu (0–100).</div><div class="formgrid">${field("Broj dresa","pNumber","")}${field("Ime igrača","pName","")}${field("Ocjena","pRating","6.8")}${field("X pozicija 0–100","pX","50","", "number")}${field("Y pozicija 0–100","pY","50","", "number")}<div class="field full"><label>Fotografija igrača (opcionalno)</label><input id="pPhoto" type="file" accept="image/*"></div><div class="field full"><label>Oznaka uz igrača</label><select id="pBadge"><option value="">Bez oznake</option><option value="yellow">Žuti karton</option><option value="red">Crveni karton</option><option value="sub">Izmjena</option><option value="goal">Strijelac</option><option value="pen">Penal</option><option value="yellow,sub">Žuti karton + izmjena</option><option value="goal,sub">Gol + izmjena</option></select></div><div id="photoHint" class="help full">Prikaz formacije koristi broj dresa u krugu, ocjenu i tamnu oznaku imena. Fotografije ostaju sačuvane u podacima igrača.</div></div><button class="btn" id="addPlayer">Dodaj igrača</button></div><div class="list" id="lineupList"></div>`;
+}
+if(activeEditor==="players"){
+html=`<h3>Ocjene igrača</h3><div class="field"><label>Ekipa</label><select id="playerSide"><option value="a">${esc(data.a.name)}</option><option value="b">${esc(data.b.name)}</option></select></div><div class="formgrid">${field("Ime igrača","ratingName","")}${field("Ocjena","ratingValue","7.0")}</div><button class="btn" id="addRating">Dodaj ocjenu</button><div class="list" id="ratingsList"></div>`;
+}
+$("editorbody").innerHTML=html;
+if(activeEditor==="match"){
+$("applyFields").onclick=()=>{document.querySelectorAll("[data-key]").forEach(el=>{let path=el.dataset.key.split(".");if(path.length===1)data[path[0]]=el.value;else if(path[1]==="score")data[path[0]][path[1]]=Number(el.value)||0;else data[path[0]][path[1]]=el.value;});data.showStars=$("showStars").checked;data.showPenaltyPill=$("showPenaltyPill").checked;data.highlightWinner=$("highlightWinner").checked;data.winnerSide=$("winnerSide").value;render();};
+// Pobjednika istakni odmah pri promjeni opcija, bez potrebe za klikom na Primijeni izmjene.
+$("highlightWinner").onchange=()=>{data.highlightWinner=$("highlightWinner").checked;renderHeader();};
+$("winnerSide").onchange=()=>{data.winnerSide=$("winnerSide").value;renderHeader();};
+const bindLogo=(inputId,side)=>{const input=$(inputId);input.onchange=()=>{const file=input.files&&input.files[0];if(!file)return;const reader=new FileReader();reader.onload=()=>{data[side].logo=reader.result;render();};reader.readAsDataURL(file);};};
+const compUpload=$("compLogoUpload");compUpload.onchange=()=>{const file=compUpload.files&&compUpload.files[0];if(!file)return;const reader=new FileReader();reader.onload=()=>{data.competitionLogo=reader.result;render();};reader.readAsDataURL(file);};
+bindLogo("logoA","a");bindLogo("logoB","b");
+}
+if(activeEditor==="events"){
+let editingEvent=-1;
+const phaseSelect=$("ePhase"), typeSelect=$("eType");
+function updatePhaseOptions(){
+ data.extraTime=$("enableET").checked; data.penalties=$("enablePens").checked;
+ const current=phaseSelect.value;
+ [...phaseSelect.options].forEach(o=>{if(o.value==="et1"||o.value==="et2")o.disabled=!data.extraTime;if(o.value==="pens")o.disabled=!data.penalties;});
+ if(phaseSelect.selectedOptions[0]?.disabled)phaseSelect.value="2";
+}
+$("enableET").onchange=()=>{updatePhaseOptions();};
+$("enablePens").onchange=()=>{updatePhaseOptions();};
+phaseSelect.onchange=()=>{if(phaseSelect.value==="pens")typeSelect.value="shootout_goal";};
+function syncOwnGoalTeam(){if(typeSelect.value==="own_goal_home"){$("eSide").value="a";$("eSide").disabled=true;}else if(typeSelect.value==="own_goal_away"){$("eSide").value="b";$("eSide").disabled=true;}else{$("eSide").disabled=false;}}
+typeSelect.onchange=syncOwnGoalTeam;
+function clearEventForm(){editingEvent=-1;["eMinute","ePlayer","eAssist","eScore","eDetail"].forEach(id=>$(id).value="");phaseSelect.value="1";$("eSide").value="a";typeSelect.value="goal";$("eSide").disabled=false;$("addEvent").textContent="Dodaj događaj";$("cancelEventEdit").style.display="none";}
+$("cancelEventEdit").onclick=clearEventForm;
+$("addEvent").onclick=()=>{
+ const phase=phaseSelect.value;
+ const selectedType=typeSelect.value;
+ const ownGoalSelection=selectedType==="own_goal_home"||selectedType==="own_goal_away";
+ const item={phase,half:(phase==="1"||phase==="2")?Number(phase):undefined,minute:$("eMinute").value||(phase==="pens"?"1.":"1'"),side:ownGoalSelection?(selectedType==="own_goal_home"?"a":"b"):$("eSide").value,creditedSide:ownGoalSelection?(selectedType==="own_goal_home"?"b":"a"):undefined,type:ownGoalSelection?"own_goal":selectedType,player:$("ePlayer").value||"Igrač",assist:$("eAssist").value,score:$("eScore").value,detail:$("eDetail").value};
+ if(editingEvent>=0)data.events[editingEvent]=item;else data.events.push(item);
+ clearEventForm();renderEditor();render();
+};
+document.querySelectorAll("[data-edit-event]").forEach(b=>b.onclick=()=>{
+ editingEvent=Number(b.dataset.editEvent);const e=data.events[editingEvent];
+ updatePhaseOptions();phaseSelect.value=eventPhase(e);if(phaseSelect.selectedOptions[0]?.disabled){if(phaseSelect.value.startsWith("et")){$("enableET").checked=true;}if(phaseSelect.value==="pens")$("enablePens").checked=true;updatePhaseOptions();phaseSelect.value=eventPhase(e);}
+ $("eMinute").value=e.minute||"";$("eSide").value=e.side||"a";typeSelect.value=e.type==="own_goal"?(e.side==="a"?"own_goal_home":"own_goal_away"):(e.type||"goal");syncOwnGoalTeam();$("ePlayer").value=e.player||"";$("eAssist").value=e.assist||"";$("eScore").value=e.score||"";$("eDetail").value=e.detail||"";
+ $("addEvent").textContent="Sačuvaj izmjene";$("cancelEventEdit").style.display="inline-block";
+});
+document.querySelectorAll("[data-del-event]").forEach(b=>b.onclick=()=>{data.events.splice(Number(b.dataset.delEvent),1);renderEditor();render();});
+}
+if(activeEditor==="stats"){
+let editingStat=-1;
+$("addStat").onclick=()=>{
+ const item={label:$("sLabel").value||"Nova statistika",a:$("sA").value,b:$("sB").value,
+ av:Math.min(100,Math.max(0,Number($("sAv").value)||0)),
+ bv:Math.min(100,Math.max(0,Number($("sBv").value)||0)),
+ half:$("sHalf").value,extraA:$("sExtraA").value,extraB:$("sExtraB").value};
+ if(editingStat>=0){data.stats[editingStat]=item;editingStat=-1;$("addStat").textContent="Dodaj statistiku";}
+ else{data.stats.push(item);}
+ renderEditor();render();
+};
+document.querySelectorAll("[data-edit-stat]").forEach(b=>b.onclick=()=>{
+ editingStat=Number(b.dataset.editStat);
+ const item=data.stats[editingStat];
+ $("sLabel").value=item.label||"";
+ $("sA").value=item.a??"";
+ $("sB").value=item.b??"";
+ $("sAv").value=item.av??50;
+ $("sBv").value=item.bv??50;
+ $("sHalf").value=item.half||"all";
+ $("sExtraA").value=item.extraA||"";
+ $("sExtraB").value=item.extraB||"";
+ $("addStat").textContent="Sačuvaj izmjene";
+});
+document.querySelectorAll("[data-del-stat]").forEach(b=>b.onclick=()=>{data.stats.splice(Number(b.dataset.delStat),1);renderEditor();render();});
+}
+if(activeEditor==="lineups"){
+let editingPlayer=-1,playerPhotoData="";
+$("pPhoto").onchange=()=>{const f=$("pPhoto").files[0];if(!f){playerPhotoData="";return;}const reader=new FileReader();reader.onload=()=>{playerPhotoData=reader.result;$("photoHint").textContent="Fotografija je učitana. Klikni Sačuvaj igrača da je primijeniš.";};reader.readAsDataURL(f);};
+const refresh=()=>{let side=$("lineupSide").value,team=data.lineups[side];$("formation").value=team.formation;$("lineupList").innerHTML=team.players.map((p,i)=>`<div class="item"><span>#${esc(p[0])} ${esc(p[1])} · ${esc(p[2])} · X${p[3]} Y${p[4]} ${p[5]?"· 📷":""} ${p[6]?"· "+esc(p[6]):""}</span><span><button data-edit-p="${i}">Uredi</button> <button data-del-p="${i}">Obriši</button></span></div>`).join("");document.querySelectorAll("[data-del-p]").forEach(b=>b.onclick=()=>{team.players.splice(Number(b.dataset.delP),1);if(editingPlayer===Number(b.dataset.delP))editingPlayer=-1;refresh();render();});document.querySelectorAll("[data-edit-p]").forEach(b=>b.onclick=()=>{editingPlayer=Number(b.dataset.editP);let p=team.players[editingPlayer];$("pNumber").value=p[0];$("pName").value=p[1];$("pRating").value=p[2];$("pX").value=p[3];$("pY").value=p[4];$("pBadge").value=p[6]||"";playerPhotoData=p[5]||"";$("photoHint").textContent=playerPhotoData?"Postojeća fotografija je sačuvana. Izaberi novu samo ako želiš zamjenu.":"Dodaj fotografiju da bi igrač izgledao kao na referentnoj slici.";$("addPlayer").textContent="Sačuvaj izmjene";});};
+$("lineupSide").onchange=()=>{editingPlayer=-1;playerPhotoData="";$("addPlayer").textContent="Dodaj igrača";refresh();};$("formation").oninput=()=>{data.lineups[$("lineupSide").value].formation=$("formation").value;render();};document.querySelectorAll("[data-formation]").forEach(b=>b.onclick=()=>{$("formation").value=b.dataset.formation;data.lineups[$("lineupSide").value].formation=b.dataset.formation;render();});
+$("addPlayer").onclick=()=>{let team=data.lineups[$("lineupSide").value];team.formation=$("formation").value;let old=editingPlayer>=0?team.players[editingPlayer]:null;let p=[$("pNumber").value,$("pName").value||"Igrač",$("pRating").value||"6.8",Math.min(100,Math.max(0,Number($("pX").value===""?50:$("pX").value))),Math.min(100,Math.max(0,Number($("pY").value===""?50:$("pY").value))),playerPhotoData||old?.[5]||"",$("pBadge").value||""];if(editingPlayer>=0){team.players[editingPlayer]=p;editingPlayer=-1;$("addPlayer").textContent="Dodaj igrača";}else{team.players.push(p);}playerPhotoData="";$("pPhoto").value="";$("pBadge").value="";$("photoHint").textContent="Prikaz formacije koristi broj dresa u krugu, ocjenu i tamnu oznaku imena. Fotografije ostaju sačuvane u podacima igrača.";refresh();render();};refresh();
+}
+if(activeEditor==="players"){
+const refresh=()=>{let arr=data[$("playerSide").value==="a"?"playersA":"playersB"];$("ratingsList").innerHTML=arr.map((p,i)=>`<div class="item"><span>${esc(p[0])} · ${esc(p[1])}</span><button data-del-rating="${i}">Obriši</button></div>`).join("");document.querySelectorAll("[data-del-rating]").forEach(b=>b.onclick=()=>{arr.splice(Number(b.dataset.delRating),1);refresh();render();});};
+$("playerSide").onchange=refresh;$("addRating").onclick=()=>{data[$("playerSide").value==="a"?"playersA":"playersB"].push([$("ratingName").value||"Igrač",$("ratingValue").value||"7.0"]);refresh();render();};refresh();
+}
+}
+$("save").onclick=save;
+$("export").onclick=()=>{const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="utakmica-podaci.json";a.click();URL.revokeObjectURL(a.href);};
+$("import").onclick=()=>$("file").click();
+$("file").onchange=async e=>{let f=e.target.files[0];if(!f)return;try{data=JSON.parse(await f.text());render();renderEditor();alert("Podaci uvezeni.");}catch(err){alert("JSON fajl nije ispravan.");}};
+$("reset").onclick=()=>{if(confirm("Vrati početni demo primjer? Trenutni podaci će biti zamijenjeni.")){data=structuredClone(demo);render();renderEditor();}};
+const saved=localStorage.getItem("rezultati-kalup-header-edit-v2");if(saved){try{data=JSON.parse(saved)}catch(e){}}
+render();renderEditor();
+</script>
+
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./sw.js").catch(() => {});
+  });
+}
+</script>
+
+</body></html>
